@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff1f4">
+<title>ふたりのホンネ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#fff1f4;color:#49343c;min-height:100vh;display:grid;place-items:center}
+main{width:min(92%,440px);background:white;border-radius:24px;padding:28px 22px;box-shadow:0 10px 35px #df9bac33;text-align:center}
+h1{color:#e36a8b;font-size:29px;margin:10px 0}
+p{line-height:1.7}
+textarea{width:100%;height:105px;border:1px solid #eacbd4;border-radius:14px;padding:14px;font-size:17px;resize:vertical}
+button{border:0;border-radius:15px;padding:15px 20px;font-size:17px;font-weight:bold;cursor:pointer}
+.primary{background:#e66b90;color:white;width:100%;margin-top:15px}
+.choices{display:flex;gap:12px;margin-top:24px}
+.choices button{flex:1;background:#ffe0e9;color:#a53e5e}
+.hidden{display:none}
+.answer{font-size:22px;font-weight:bold;margin:14px 0}
+small{color:#8c7780}
+</style>
+</head>
+<body>
+<main>
+<h1>💕 ふたりのホンネ</h1>
+<p>ふたりの気持ちを、YES・NOで。</p>
+<section id="create">
+<textarea id="question" maxlength="200" placeholder="質問を入力してね"></textarea>
+<button class="primary" onclick="start()">質問する ♡</button>
+</section>
+<section id="vote" class="hidden">
+<h2 id="displayQuestion"></h2>
+<p>あなたの答えは？</p>
+<div class="choices">
+<button onclick="answer('YES')">♡ YES</button>
+<button onclick="answer('NO')">NO</button>
+</div>
+</section>
+<section id="result" class="hidden">
+<h2>回答したよ ♡</h2>
+<p class="answer" id="myAnswer"></p>
+<small>これは画面確認用の試作品です。相手の回答はまだ同期されません。</small>
+<button class="primary" onclick="reset()">次の質問へ →</button>
+</section>
+</main>
+<script>
+function show(id){
+for(const section of document.querySelectorAll('main section'))section.classList.add('hidden');
+document.getElementById(id).classList.remove('hidden');
+}
+function start(){
+const q=document.getElementById('question').value.trim();
+if(!q){alert('質問を入力してね');return;}
+document.getElementById('displayQuestion').textContent=q;
+show('vote');
+}
+function answer(value){
+document.getElementById('myAnswer').textContent='あなた：'+value;
+show('result');
+}
+function reset(){
+document.getElementById('question').value='';
+show('create');
+}
+</script>
+</body>
+</html>
