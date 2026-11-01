@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -127,7 +126,9 @@ button:disabled{opacity:.5}
 <script type="module">
 import {initializeApp} from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import {getAuth,signInAnonymously,onAuthStateChanged} from
+import {
+ getAuth,signInAnonymously,onAuthStateChanged
+} from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {
  getFirestore,doc,getDoc,setDoc,onSnapshot,
@@ -157,23 +158,32 @@ let roomCode=null;
 let room=null;
 let unsubscribe=null;
 let busy=false;
+let authInitialized=false;
 
 function setStatus(message){
  $('status').textContent=message;
 }
+
 function clearError(){
  $('error').textContent='';
 }
+
 function showError(error){
  console.error(error);
- $('error').textContent=error.message||String(error);
+ $('error').textContent=
+  error.code==='permission-denied'
+  ? 'アクセスが拒否されました。Firestoreルールを確認してね。'
+  : error.message||String(error);
 }
+
 function roomRef(code){
  return doc(db,'rooms',code);
 }
+
 function generateCode(){
  return String(Math.floor(100000+Math.random()*900000));
 }
+
 function setBusy(value){
  busy=value;
  $('create').disabled=value;
@@ -230,7 +240,7 @@ function listen(code){
  unsubscribe=onSnapshot(roomRef(code),snapshot=>{
   if(!snapshot.exists()){
    showError(Error('部屋が見つかりません'));
-   leaveRoom();
+   leaveRoom(false);
    return;
   }
 
@@ -259,6 +269,7 @@ async function createRoom(){
 
   for(let i=0;i<15;i++){
    const candidate=generateCode();
+
    if(!(await getDoc(roomRef(candidate))).exists()){
     code=candidate;
     break;
@@ -295,7 +306,8 @@ async function joinRoom(code){
   }
 
   await runTransaction(db,async transaction=>{
-   const snapshot=await transaction.get(roomRef(code));
+   const ref=roomRef(code);
+   const snapshot=await transaction.get(ref);
 
    if(!snapshot.exists()){
     throw Error('部屋が見つかりません');
@@ -303,12 +315,16 @@ async function joinRoom(code){
 
    const members=snapshot.data().members;
 
+   if(!Array.isArray(members)){
+    throw Error('部屋のデータが不正です');
+   }
+
    if(!members.includes(uid)){
     if(members.length>=2){
      throw Error('この部屋は満員です');
     }
 
-    transaction.update(roomRef(code),{
+    transaction.update(ref,{
      members:[...members,uid]
     });
    }
@@ -335,14 +351,15 @@ async function askQuestion(){
 
  try{
   await runTransaction(db,async transaction=>{
-   const snapshot=await transaction.get(roomRef(roomCode));
+   const ref=roomRef(roomCode);
+   const snapshot=await transaction.get(ref);
    const data=snapshot.data();
 
    if(!data||data.members.length!==2||data.question){
     throw Error('今は質問を開始できません');
    }
 
-   transaction.update(roomRef(roomCode),{
+   transaction.update(ref,{
     question,
     answers:{}
    });
@@ -360,7 +377,8 @@ async function answer(value){
 
  try{
   await runTransaction(db,async transaction=>{
-   const snapshot=await transaction.get(roomRef(roomCode));
+   const ref=roomRef(roomCode);
+   const snapshot=await transaction.get(ref);
    const data=snapshot.data();
 
    if(!data||!data.question){
@@ -369,8 +387,11 @@ async function answer(value){
 
    if(data.answers[uid])return;
 
-   transaction.update(roomRef(roomCode),{
-    ['answers.'+uid]:value
+   transaction.update(ref,{
+    answers:{
+     ...data.answers,
+     [uid]:value
+    }
    });
   });
  }catch(error){
@@ -384,14 +405,15 @@ async function nextQuestion(){
 
  try{
   await runTransaction(db,async transaction=>{
-   const snapshot=await transaction.get(roomRef(roomCode));
+   const ref=roomRef(roomCode);
+   const snapshot=await transaction.get(ref);
    const data=snapshot.data();
 
    if(!data||Object.keys(data.answers).length!==2){
     throw Error('まだ2人の回答がそろっていません');
    }
 
-   transaction.update(roomRef(roomCode),{
+   transaction.update(ref,{
     question:'',
     answers:{}
    });
@@ -401,7 +423,7 @@ async function nextQuestion(){
  }
 }
 
-function leaveRoom(){
+function leaveRoom(clear=true){
  if(unsubscribe){
   unsubscribe();
   unsubscribe=null;
@@ -417,6 +439,7 @@ function leaveRoom(){
  history.replaceState(null,'',url);
 
  setStatus('準備できたよ ♡');
+ if(clear)clearError();
  render();
 }
 
@@ -426,7 +449,7 @@ $('ask').onclick=askQuestion;
 $('yes').onclick=()=>answer('YES');
 $('no').onclick=()=>answer('NO');
 $('next').onclick=nextQuestion;
-$('leave').onclick=leaveRoom;
+$('leave').onclick=()=>leaveRoom();
 
 $('share').onclick=async()=>{
  const url=new URL(location.href);
@@ -449,23 +472,45 @@ $('share').onclick=async()=>{
 };
 
 onAuthStateChanged(auth,async user=>{
- if(!user)return;
+ if(!user){
+  uid=null;
+
+  if(!authInitialized){
+   authInitialized=true;
+
+   try{
+    await signInAnonymously(auth);
+   }catch(error){
+    showError(error);
+    setStatus('認証に失敗しました');
+   }
+  }
+  return;
+ }
 
  uid=user.uid;
  setStatus('準備できたよ ♡');
 
- const urlCode=new URLSearchParams(location.search).get('room');
- const savedCode=sessionStorage.getItem('futariRoom');
- const code=urlCode||savedCode;
+ if(!authInitialized){
+  authInitialized=true;
 
- if(code){
-  await joinRoom(code);
+  const urlCode=
+   new URLSearchParams(location.search).get('room');
+
+  const savedCode=
+   sessionStorage.getItem('futariRoom');
+
+  const code=urlCode||savedCode;
+
+  if(code){
+   await joinRoom(code);
+  }else{
+   render();
+  }
  }else{
   render();
  }
-});
-
-signInAnonymously(auth).catch(showError);
+},showError);
 </script>
 </body>
 </html>
