@@ -133,7 +133,6 @@ button:disabled{opacity:.5}
  overflow-wrap:anywhere;
 }
 
-/* 招待リンク用 */
 .invite-area{
  margin:16px 0 22px;
  padding:16px 12px;
@@ -151,7 +150,6 @@ button:disabled{opacity:.5}
  color:#947d86;
  margin:4px 0;
 }
-
 </style>
 </head>
 
@@ -167,7 +165,6 @@ button:disabled{opacity:.5}
 
 <p id="error" role="alert"></p>
 
-<!-- ホーム画面 -->
 <section id="home" class="hidden">
 
  <button id="create" class="primary">
@@ -189,8 +186,6 @@ button:disabled{opacity:.5}
 
 </section>
 
-
-<!-- 部屋画面 -->
 <section id="room" class="hidden">
 
  <p>ふたりの部屋 ♡</p>
@@ -199,8 +194,6 @@ button:disabled{opacity:.5}
 
  <p id="members" class="muted"></p>
 
-
- <!-- いつでも表示される招待リンク -->
  <div class="invite-area">
 
   <button id="share" class="primary">
@@ -213,8 +206,6 @@ button:disabled{opacity:.5}
 
  </div>
 
-
- <!-- 質問入力 -->
  <section id="editor" class="hidden">
 
   <textarea
@@ -229,8 +220,6 @@ button:disabled{opacity:.5}
 
  </section>
 
-
- <!-- YES / NO 回答 -->
  <section id="vote" class="hidden">
 
   <h2 id="voteQuestion"></h2>
@@ -251,8 +240,6 @@ button:disabled{opacity:.5}
 
  </section>
 
-
- <!-- 回答待ち -->
  <section id="waiting" class="hidden">
 
   <h2 id="waitingQuestion"></h2>
@@ -263,8 +250,6 @@ button:disabled{opacity:.5}
 
  </section>
 
-
- <!-- 結果 -->
  <section id="result" class="hidden">
 
   <h2 id="resultQuestion"></h2>
@@ -291,7 +276,6 @@ button:disabled{opacity:.5}
 
  </section>
 
-
  <button
   id="leave"
   class="secondary"
@@ -302,14 +286,12 @@ button:disabled{opacity:.5}
 
 </section>
 
-
 <p class="muted">
  質問と回答は次の質問で消去されます。<br>
  部屋のデータは退出後も残る場合があります。
 </p>
 
 </main>
-
 
 <script type="module">
 
@@ -334,7 +316,6 @@ import {
 } from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
-
 const firebaseConfig={
  apiKey:"AIzaSyBpGIfu3jOksMS8_jPAUPXHuh4GzgwyUq8",
  authDomain:"futari-no-honne.firebaseapp.com",
@@ -343,7 +324,6 @@ const firebaseConfig={
  messagingSenderId:"512221931738",
  appId:"1:512221931738:web:e69b8fd62b46c6eaa69de3"
 };
-
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
@@ -354,6 +334,7 @@ const $=id=>document.getElementById(id);
 const show=(id,visible)=>
  $(id).classList.toggle('hidden',!visible);
 
+const STORAGE_KEY='futariRoom';
 
 let uid=null;
 let roomCode=null;
@@ -361,7 +342,6 @@ let room=null;
 let unsubscribe=null;
 let busy=false;
 let authInitialized=false;
-
 
 function setStatus(message){
  $('status').textContent=message;
@@ -396,6 +376,30 @@ function setBusy(value){
  $('join').disabled=value;
 }
 
+/* 部屋番号を保存 */
+function saveRoom(code){
+ localStorage.setItem(STORAGE_KEY,code);
+ sessionStorage.removeItem(STORAGE_KEY);
+}
+
+/* 保存した部屋番号を取得 */
+function getSavedRoom(){
+ const code=
+  localStorage.getItem(STORAGE_KEY)||
+  sessionStorage.getItem(STORAGE_KEY);
+
+ if(code&&/^\d{6}$/.test(code)){
+  return code;
+ }
+
+ return null;
+}
+
+/* 保存した部屋番号を削除 */
+function clearSavedRoom(){
+ localStorage.removeItem(STORAGE_KEY);
+ sessionStorage.removeItem(STORAGE_KEY);
+}
 
 /* 画面表示 */
 function render(){
@@ -412,7 +416,6 @@ function render(){
  const question=room.question||'';
 
  const myAnswer=answers[uid];
-
  const otherUid=members.find(id=>id!==uid);
  const otherAnswer=answers[otherUid];
 
@@ -443,7 +446,6 @@ function render(){
  }
 }
 
-
 /* 部屋を監視 */
 function listen(code){
 
@@ -452,11 +454,10 @@ function listen(code){
  roomCode=code;
  room=null;
 
- sessionStorage.setItem('futariRoom',code);
+ saveRoom(code);
 
  const url=new URL(location.href);
  url.searchParams.set('room',code);
-
  history.replaceState(null,'',url);
 
  unsubscribe=onSnapshot(
@@ -489,7 +490,6 @@ function listen(code){
 
  render();
 }
-
 
 /* 部屋を作る */
 async function createRoom(){
@@ -532,7 +532,6 @@ async function createRoom(){
   setBusy(false);
  }
 }
-
 
 /* 部屋に参加 */
 async function joinRoom(code){
@@ -591,7 +590,6 @@ async function joinRoom(code){
  }
 }
 
-
 /* 質問する */
 async function askQuestion(){
 
@@ -641,7 +639,6 @@ async function askQuestion(){
  }
 }
 
-
 /* YES / NO */
 async function answer(value){
 
@@ -681,7 +678,6 @@ async function answer(value){
  }
 }
 
-
 /* 次の質問 */
 async function nextQuestion(){
 
@@ -720,7 +716,6 @@ async function nextQuestion(){
  }
 }
 
-
 /* 退出 */
 function leaveRoom(clear=true){
 
@@ -732,11 +727,10 @@ function leaveRoom(clear=true){
  roomCode=null;
  room=null;
 
- sessionStorage.removeItem('futariRoom');
+ clearSavedRoom();
 
  const url=new URL(location.href);
  url.searchParams.delete('room');
-
  history.replaceState(null,'',url);
 
  setStatus('準備できたよ ♡');
@@ -745,7 +739,6 @@ function leaveRoom(clear=true){
 
  render();
 }
-
 
 /* 招待リンク共有 */
 async function shareInvite(){
@@ -800,7 +793,6 @@ async function shareInvite(){
  }
 }
 
-
 /* ボタン設定 */
 $('create').onclick=createRoom;
 
@@ -825,7 +817,6 @@ $('leave').onclick=()=>{
 };
 
 $('share').onclick=shareInvite;
-
 
 /* Firebase認証 */
 onAuthStateChanged(
@@ -863,8 +854,7 @@ onAuthStateChanged(
      location.search
     ).get('room');
 
-   const savedCode=
-    sessionStorage.getItem('futariRoom');
+   const savedCode=getSavedRoom();
 
    const code=urlCode||savedCode;
 
