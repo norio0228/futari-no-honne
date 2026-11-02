@@ -6,313 +6,145 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#fff0f5">
 <title>💕 ふたりのホンネ</title>
-
 <style>
 *{box-sizing:border-box}
-
 body{
- margin:0;
- padding:18px;
- min-height:100dvh;
- display:grid;
- place-items:center;
+ margin:0;padding:18px;min-height:100dvh;
+ display:grid;place-items:center;
  background:linear-gradient(145deg,#fff0f5,#ffe5ec);
  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
- color:#49343d;
+ color:#49343d
 }
-
 main{
- width:100%;
- max-width:430px;
- background:white;
- border-radius:26px;
- padding:28px 22px;
- text-align:center;
- box-shadow:0 12px 35px #cf739333;
+ width:100%;max-width:430px;
+ background:#fff;border-radius:26px;
+ padding:28px 22px;text-align:center;
+ box-shadow:0 12px 35px #cf739333
 }
-
-h1{
- color:#db6085;
- font-size:27px;
- margin:8px 0;
-}
-
-h2{
- font-size:21px;
- overflow-wrap:anywhere;
-}
-
+h1{color:#db6085;font-size:27px;margin:8px 0}
+h2{font-size:21px;overflow-wrap:anywhere}
 p{line-height:1.7}
-
-input,textarea{
- width:100%;
- padding:15px;
- margin:8px 0;
- border:1px solid #e9c6d1;
- border-radius:14px;
- font:inherit;
- font-size:16px;
-}
-
 textarea{
- height:110px;
- resize:vertical;
+ width:100%;height:110px;resize:vertical;
+ padding:15px;margin:8px 0;
+ border:1px solid #e9c6d1;border-radius:14px;
+ font:inherit;font-size:16px
 }
-
 button{
- border:0;
- border-radius:14px;
- padding:15px;
- font-size:16px;
- font-weight:bold;
- cursor:pointer;
+ border:0;border-radius:14px;
+ padding:15px;font-size:16px;
+ font-weight:bold;cursor:pointer
 }
-
 button:disabled{opacity:.5}
-
 .primary{
- width:100%;
- margin:9px 0;
- background:#e66b91;
- color:white;
+ width:100%;margin:9px 0;
+ background:#e66b91;color:white
 }
-
-.secondary{
- background:#ffe0ea;
- color:#a83d60;
-}
-
-.choices{
- display:flex;
- gap:12px;
-}
-
+.secondary{background:#ffe0ea;color:#a83d60}
+.choices{display:flex;gap:12px}
 .choices button{flex:1}
-
 .hidden{display:none!important}
-
-.code{
- font-size:34px;
- font-weight:bold;
- color:#d95680;
- letter-spacing:5px;
-}
-
-.muted{
- color:#947d86;
- font-size:13px;
-}
-
-.status{
- font-size:14px;
- color:#99627a;
-}
-
-.answers{
- display:flex;
- gap:10px;
- margin:20px 0;
-}
-
+.muted{color:#947d86;font-size:13px}
+.status{font-size:14px;color:#99627a}
+.answers{display:flex;gap:10px;margin:20px 0}
 .answers>div{
- flex:1;
- padding:18px 5px;
- border-radius:15px;
- background:#fff0f5;
- font-size:20px;
- font-weight:bold;
+ flex:1;padding:18px 5px;
+ border-radius:15px;background:#fff0f5;
+ font-size:20px;font-weight:bold
 }
-
-.answers small{
- font-size:13px;
- color:#947d86;
-}
-
-#error{
- color:#ba244d;
- overflow-wrap:anywhere;
-}
-
+.answers small{font-size:13px;color:#947d86}
+#error{color:#ba244d;overflow-wrap:anywhere}
 .invite-area{
- margin:16px 0 22px;
- padding:16px 12px;
- border:1px solid #f5d3df;
- border-radius:18px;
- background:#fff7fa;
+ margin:16px 0 22px;padding:14px 12px;
+ border:1px solid #f5d3df;border-radius:18px;
+ background:#fff7fa
 }
-
-.invite-area .primary{
- margin:8px 0;
-}
-
 .invite-note{
- font-size:12px;
- color:#947d86;
- margin:4px 0;
+ font-size:12px;color:#947d86;margin:4px 0
 }
 </style>
 </head>
-
 <body>
 <main>
-
 <h1>💕 ふたりのホンネ</h1>
 <p>ふたりの気持ちを、YES・NOで。</p>
 
-<p id="status" class="status">
- 接続しています…
-</p>
-
+<p id="status" class="status">接続しています…</p>
 <p id="error" role="alert"></p>
 
-<section id="home" class="hidden">
-
- <button id="create" class="primary">
-  部屋を作る ♡
- </button>
-
- <p>または参加コードを入力</p>
-
- <input
-  id="joinCode"
-  placeholder="6桁の参加コード"
-  maxlength="6"
-  inputmode="numeric"
- >
-
- <button id="join" class="primary">
-  部屋に参加
- </button>
-
-</section>
-
-<section id="room" class="hidden">
-
- <p>ふたりの部屋 ♡</p>
-
- <div id="roomCode" class="code"></div>
+<section id="appScreen" class="hidden">
+ <div class="invite-area">
+  <button id="share" class="primary">
+   💕 リンクを送る ♡
+  </button>
+  <p class="invite-note">
+   相手にアプリのリンクを送れるよ ♡
+  </p>
+ </div>
 
  <p id="members" class="muted"></p>
 
- <div class="invite-area">
-
-  <button id="share" class="primary">
-   💕 招待リンクを送る ♡
-  </button>
-
-  <p class="invite-note">
-   質問中でも、いつでもリンクを送れるよ ♡
-  </p>
-
- </div>
-
  <section id="editor" class="hidden">
-
-  <textarea
-   id="questionInput"
+  <textarea id="questionInput"
    placeholder="ふたりに聞きたい質問を入力してね"
-   maxlength="200"
-  ></textarea>
-
+   maxlength="200"></textarea>
   <button id="ask" class="primary">
    質問する ♡
   </button>
-
  </section>
 
  <section id="vote" class="hidden">
-
   <h2 id="voteQuestion"></h2>
-
   <p>あなたの答えは？</p>
-
   <div class="choices">
-
-   <button class="secondary" id="yes">
-    ♡ YES
-   </button>
-
-   <button class="secondary" id="no">
-    NO
-   </button>
-
+   <button id="yes" class="secondary">♡ YES</button>
+   <button id="no" class="secondary">NO</button>
   </div>
-
  </section>
 
  <section id="waiting" class="hidden">
-
   <h2 id="waitingQuestion"></h2>
-
   <p>回答したよ ♡</p>
-
   <p>相手の回答を待っています…</p>
-
  </section>
 
  <section id="result" class="hidden">
-
   <h2 id="resultQuestion"></h2>
-
   <p>ふたりの回答 ♡</p>
-
   <div class="answers">
-
    <div>
     <small>あなた</small>
     <p id="mine"></p>
    </div>
-
    <div>
     <small>相手</small>
     <p id="theirs"></p>
    </div>
-
   </div>
-
   <button id="next" class="primary">
    次の質問へ ♡
   </button>
-
  </section>
-
- <button
-  id="leave"
-  class="secondary"
-  style="margin-top:20px"
- >
-  部屋から退出
- </button>
-
 </section>
 
 <p class="muted">
  質問と回答は次の質問で消去されます。<br>
- 部屋のデータは退出後も残る場合があります。
+ 同じ2人で使い続けるための試作版です。
 </p>
-
 </main>
 
 <script type="module">
-
 import {initializeApp} from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 
 import {
- getAuth,
- signInAnonymously,
- onAuthStateChanged
+ getAuth,signInAnonymously,onAuthStateChanged
 } from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 
 import {
- getFirestore,
- doc,
- getDoc,
- setDoc,
- onSnapshot,
- runTransaction,
- serverTimestamp
+ getFirestore,doc,getDoc,setDoc,onSnapshot,
+ runTransaction,serverTimestamp
 } from
  'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
@@ -329,19 +161,19 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
+// Firestoreルールで追加した固定データ
+const coupleRef=doc(db,'couples','main');
+
 const $=id=>document.getElementById(id);
-
 const show=(id,visible)=>
- $(id).classList.toggle('hidden',!visible);
-
-const STORAGE_KEY='futariRoom';
+ $(id).classList.toggle('hidden',!!visible===false);
 
 let uid=null;
-let roomCode=null;
-let room=null;
+let couple=null;
 let unsubscribe=null;
-let busy=false;
-let authInitialized=false;
+let initializing=false;
+let authStarted=false;
+let actionBusy=false;
 
 function setStatus(message){
  $('status').textContent=message;
@@ -353,85 +185,51 @@ function clearError(){
 
 function showError(error){
  console.error(error);
-
  $('error').textContent=
   error.code==='permission-denied'
-  ? 'アクセスが拒否されました。Firestoreルールを確認してね。'
-  : error.message||String(error);
+   ? 'アクセスが拒否されました。2人の登録状態とFirestoreルールを確認してね。'
+   : error.message||String(error);
 }
 
-function roomRef(code){
- return doc(db,'rooms',code);
-}
-
-function generateCode(){
- return String(
-  Math.floor(100000+Math.random()*900000)
- );
-}
-
-function setBusy(value){
- busy=value;
- $('create').disabled=value;
- $('join').disabled=value;
-}
-
-/* 部屋番号を保存 */
-function saveRoom(code){
- localStorage.setItem(STORAGE_KEY,code);
- sessionStorage.removeItem(STORAGE_KEY);
-}
-
-/* 保存した部屋番号を取得 */
-function getSavedRoom(){
- const code=
-  localStorage.getItem(STORAGE_KEY)||
-  sessionStorage.getItem(STORAGE_KEY);
-
- if(code&&/^\d{6}$/.test(code)){
-  return code;
+function setActionBusy(value){
+ actionBusy=value;
+ for(const id of ['ask','yes','no','next']){
+  $(id).disabled=value;
  }
-
- return null;
 }
 
-/* 保存した部屋番号を削除 */
-function clearSavedRoom(){
- localStorage.removeItem(STORAGE_KEY);
- sessionStorage.removeItem(STORAGE_KEY);
-}
-
-/* 画面表示 */
 function render(){
+ if(!couple||!uid)return;
 
- show('home',!roomCode);
- show('room',!!roomCode);
+ const members=couple.members||[];
+ const answers=couple.answers||{};
+ const question=couple.question||'';
+ const isMember=members.includes(uid);
 
- if(!roomCode||!room)return;
+ show('appScreen',true);
 
- $('roomCode').textContent=roomCode;
+ $('members').textContent=
+  members.length===1
+   ? '相手の参加を待っています… ♡'
+   : 'ふたりが接続中 ♡';
 
- const members=room.members||[];
- const answers=room.answers||{};
- const question=room.question||'';
+ if(!isMember){
+  show('editor',false);
+  show('vote',false);
+  show('waiting',false);
+  show('result',false);
+  setStatus('このペアは登録済みです');
+  return;
+ }
 
  const myAnswer=answers[uid];
  const otherUid=members.find(id=>id!==uid);
  const otherAnswer=answers[otherUid];
-
  const bothAnswered=!!myAnswer&&!!otherAnswer;
 
- $('members').textContent=
-  members.length+'/2人が参加中';
-
  show('editor',members.length===2&&!question);
- show('vote',!!question&&!myAnswer);
-
- show(
-  'waiting',
-  !!question&&!!myAnswer&&!bothAnswered
- );
-
+ show('vote',members.length===2&&!!question&&!myAnswer);
+ show('waiting',!!question&&!!myAnswer&&!bothAnswered);
  show('result',!!question&&bothAnswered);
 
  if(question){
@@ -446,432 +244,239 @@ function render(){
  }
 }
 
-/* 部屋を監視 */
-function listen(code){
-
- if(unsubscribe)unsubscribe();
-
- roomCode=code;
- room=null;
-
- saveRoom(code);
-
- const url=new URL(location.href);
- url.searchParams.set('room',code);
- history.replaceState(null,'',url);
-
- unsubscribe=onSnapshot(
-  roomRef(code),
-
-  snapshot=>{
-
-   if(!snapshot.exists()){
-    showError(Error('部屋が見つかりません'));
-    leaveRoom(false);
-    return;
-   }
-
-   const data=snapshot.data();
-
-   if(!data.members.includes(uid)){
-    showError(
-     Error('この部屋には参加していません')
-    );
-    return;
-   }
-
-   room=data;
-   setStatus('接続中 ♡');
-   render();
-  },
-
-  showError
- );
-
- render();
-}
-
-/* 部屋を作る */
-async function createRoom(){
-
- if(busy||!uid)return;
-
- setBusy(true);
+async function initializeCouple(){
+ if(initializing||!uid)return;
+ initializing=true;
  clearError();
+ setStatus('ふたりのデータを確認しています…');
 
  try{
+  const snapshot=await getDoc(coupleRef);
 
-  let code=null;
-
-  for(let i=0;i<15;i++){
-
-   const candidate=generateCode();
-
-   if(!(await getDoc(roomRef(candidate))).exists()){
-    code=candidate;
-    break;
+  if(!snapshot.exists()){
+   // 同時アクセス時は先に作成した側を優先
+   try{
+    await runTransaction(db,async tx=>{
+     const current=await tx.get(coupleRef);
+     if(!current.exists()){
+      tx.set(coupleRef,{
+       members:[uid],
+       question:'',
+       answers:{},
+       createdAt:serverTimestamp()
+      });
+     }
+    });
+   }catch(error){
+    // 競合で作成済みなら再取得で確認する
+    const retry=await getDoc(coupleRef);
+    if(!retry.exists())throw error;
    }
   }
 
-  if(!code){
-   throw Error('部屋を作れませんでした');
-  }
+  // 最初の2人だけ登録
+  await runTransaction(db,async tx=>{
+   const current=await tx.get(coupleRef);
 
-  await setDoc(roomRef(code),{
-   members:[uid],
-   question:'',
-   answers:{},
-   createdAt:serverTimestamp()
+   if(!current.exists()){
+    throw Error('ペアデータが見つかりません');
+   }
+
+   const members=current.data().members;
+
+   if(!Array.isArray(members)){
+    throw Error('ペアデータが不正です');
+   }
+
+   if(!members.includes(uid)){
+    if(members.length>=2){
+     throw Error(
+      'このアプリにはすでに2人が登録されています。'
+     );
+    }
+    tx.update(coupleRef,{
+     members:[...members,uid]
+    });
+   }
   });
 
-  listen(code);
+  if(unsubscribe)unsubscribe();
 
- }catch(error){
-  showError(error);
- }finally{
-  setBusy(false);
- }
-}
-
-/* 部屋に参加 */
-async function joinRoom(code){
-
- if(busy||!uid)return;
-
- setBusy(true);
- clearError();
-
- try{
-
-  code=String(code).trim();
-
-  if(!/^\d{6}$/.test(code)){
-   throw Error(
-    '6桁の参加コードを入力してね'
-   );
-  }
-
-  await runTransaction(
-   db,
-   async transaction=>{
-
-    const ref=roomRef(code);
-    const snapshot=await transaction.get(ref);
-
-    if(!snapshot.exists()){
-     throw Error('部屋が見つかりません');
-    }
-
-    const members=snapshot.data().members;
-
-    if(!Array.isArray(members)){
-     throw Error('部屋のデータが不正です');
-    }
-
-    if(!members.includes(uid)){
-
-     if(members.length>=2){
-      throw Error('この部屋は満員です');
-     }
-
-     transaction.update(ref,{
-      members:[...members,uid]
-     });
-    }
+  unsubscribe=onSnapshot(coupleRef,snapshot=>{
+   if(!snapshot.exists()){
+    showError(Error('ペアデータがありません'));
+    return;
    }
-  );
 
-  listen(code);
+   couple=snapshot.data();
+
+   if(!couple.members.includes(uid)){
+    show('appScreen',false);
+    showError(Error('このペアには参加できません'));
+    return;
+   }
+
+   setStatus('接続中 ♡');
+   render();
+  },showError);
 
  }catch(error){
   showError(error);
+  setStatus('接続できませんでした');
  }finally{
-  setBusy(false);
+  initializing=false;
  }
 }
 
-/* 質問する */
 async function askQuestion(){
+ if(actionBusy||!uid)return;
 
- if(!roomCode)return;
-
- clearError();
-
- const question=
-  $('questionInput').value.trim();
-
+ const question=$('questionInput').value.trim();
  if(!question){
   showError(Error('質問を入力してね'));
   return;
  }
 
+ clearError();
+ setActionBusy(true);
+
  try{
+  await runTransaction(db,async tx=>{
+   const snapshot=await tx.get(coupleRef);
+   const data=snapshot.data();
 
-  await runTransaction(
-   db,
-   async transaction=>{
-
-    const ref=roomRef(roomCode);
-    const snapshot=await transaction.get(ref);
-    const data=snapshot.data();
-
-    if(
-     !data||
-     data.members.length!==2||
-     data.question
-    ){
-     throw Error(
-      '今は質問を開始できません'
-     );
-    }
-
-    transaction.update(ref,{
-     question,
-     answers:{}
-    });
+   if(!data||
+      !data.members.includes(uid)||
+      data.members.length!==2||
+      data.question){
+    throw Error('今は質問を開始できません');
    }
-  );
 
+   tx.update(coupleRef,{
+    question,
+    answers:{}
+   });
+  });
   $('questionInput').value='';
-
  }catch(error){
   showError(error);
+ }finally{
+  setActionBusy(false);
  }
 }
 
-/* YES / NO */
 async function answer(value){
-
- if(!roomCode||!uid)return;
+ if(actionBusy||!uid)return;
 
  clearError();
+ setActionBusy(true);
 
  try{
+  await runTransaction(db,async tx=>{
+   const snapshot=await tx.get(coupleRef);
+   const data=snapshot.data();
 
-  await runTransaction(
-   db,
-   async transaction=>{
-
-    const ref=roomRef(roomCode);
-    const snapshot=await transaction.get(ref);
-    const data=snapshot.data();
-
-    if(!data||!data.question){
-     throw Error(
-      '回答できる質問がありません'
-     );
-    }
-
-    if(data.answers[uid])return;
-
-    transaction.update(ref,{
-     answers:{
-      ...data.answers,
-      [uid]:value
-     }
-    });
+   if(!data||
+      !data.members.includes(uid)||
+      data.members.length!==2||
+      !data.question){
+    throw Error('回答できる質問がありません');
    }
-  );
 
+   if(data.answers[uid])return;
+
+   tx.update(coupleRef,{
+    answers:{
+     ...data.answers,
+     [uid]:value
+    }
+   });
+  });
  }catch(error){
   showError(error);
+ }finally{
+  setActionBusy(false);
  }
 }
 
-/* 次の質問 */
 async function nextQuestion(){
-
- if(!roomCode)return;
+ if(actionBusy||!uid)return;
 
  clearError();
+ setActionBusy(true);
 
  try{
+  await runTransaction(db,async tx=>{
+   const snapshot=await tx.get(coupleRef);
+   const data=snapshot.data();
 
-  await runTransaction(
-   db,
-   async transaction=>{
-
-    const ref=roomRef(roomCode);
-    const snapshot=await transaction.get(ref);
-    const data=snapshot.data();
-
-    if(
-     !data||
-     Object.keys(data.answers).length!==2
-    ){
-     throw Error(
-      'まだ2人の回答がそろっていません'
-     );
-    }
-
-    transaction.update(ref,{
-     question:'',
-     answers:{}
-    });
+   if(!data||
+      !data.members.includes(uid)||
+      Object.keys(data.answers).length!==2){
+    throw Error('まだ2人の回答がそろっていません');
    }
-  );
 
+   tx.update(coupleRef,{
+    question:'',
+    answers:{}
+   });
+  });
  }catch(error){
   showError(error);
+ }finally{
+  setActionBusy(false);
  }
 }
 
-/* 退出 */
-function leaveRoom(clear=true){
-
- if(unsubscribe){
-  unsubscribe();
-  unsubscribe=null;
- }
-
- roomCode=null;
- room=null;
-
- clearSavedRoom();
-
- const url=new URL(location.href);
- url.searchParams.delete('room');
- history.replaceState(null,'',url);
-
- setStatus('準備できたよ ♡');
-
- if(clear)clearError();
-
- render();
-}
-
-/* 招待リンク共有 */
 async function shareInvite(){
-
- if(!roomCode){
-  showError(Error('部屋を作ってから送ってね'));
-  return;
- }
-
- clearError();
-
  const url=new URL(location.href);
- url.searchParams.set('room',roomCode);
-
+ url.search='';
+ url.hash='';
  const inviteUrl=url.toString();
 
  try{
-
   if(navigator.share){
-
    await navigator.share({
     title:'💕 ふたりのホンネ',
-    text:
-     '💕 ふたりのホンネに招待するよ！\n'+
-     '参加コード：'+roomCode+'\n'+
-     '一緒にYES・NOで答えよう ♡',
+    text:'ふたりの気持ちを、YES・NOで。一緒に答えよう ♡',
     url:inviteUrl
    });
-
   }else if(navigator.clipboard){
-
    await navigator.clipboard.writeText(inviteUrl);
-
-   alert(
-    '招待リンクをコピーしたよ ♡\n'+
-    'LINEなどに貼り付けて送ってね！'
-   );
-
+   alert('リンクをコピーしたよ ♡');
   }else{
-
-   prompt(
-    'このリンクをコピーして送ってね ♡',
-    inviteUrl
-   );
+   prompt('このリンクをコピーしてね ♡',inviteUrl);
   }
-
  }catch(error){
-
-  if(error.name!=='AbortError'){
-   showError(error);
-  }
+  if(error.name!=='AbortError')showError(error);
  }
 }
 
-/* ボタン設定 */
-$('create').onclick=createRoom;
-
-$('join').onclick=()=>{
- joinRoom($('joinCode').value);
-};
-
 $('ask').onclick=askQuestion;
-
-$('yes').onclick=()=>{
- answer('YES');
-};
-
-$('no').onclick=()=>{
- answer('NO');
-};
-
+$('yes').onclick=()=>answer('YES');
+$('no').onclick=()=>answer('NO');
 $('next').onclick=nextQuestion;
-
-$('leave').onclick=()=>{
- leaveRoom();
-};
-
 $('share').onclick=shareInvite;
 
-/* Firebase認証 */
-onAuthStateChanged(
- auth,
- async user=>{
-
-  if(!user){
-
-   uid=null;
-
-   if(!authInitialized){
-
-    authInitialized=true;
-
-    try{
-     await signInAnonymously(auth);
-    }catch(error){
-     showError(error);
-     setStatus('認証に失敗しました');
-    }
+onAuthStateChanged(auth,async user=>{
+ if(!user){
+  uid=null;
+  if(!authStarted){
+   authStarted=true;
+   try{
+    await signInAnonymously(auth);
+   }catch(error){
+    showError(error);
+    setStatus('認証に失敗しました');
    }
-
-   return;
   }
+  return;
+ }
 
-  uid=user.uid;
-  setStatus('準備できたよ ♡');
-
-  if(!authInitialized){
-
-   authInitialized=true;
-
-   const urlCode=
-    new URLSearchParams(
-     location.search
-    ).get('room');
-
-   const savedCode=getSavedRoom();
-
-   const code=urlCode||savedCode;
-
-   if(code){
-    await joinRoom(code);
-   }else{
-    render();
-   }
-
-  }else{
-   render();
-  }
-
- },
- showError
-);
-
+ uid=user.uid;
+ authStarted=true;
+ await initializeCouple();
+},showError);
 </script>
 </body>
 </html>
