@@ -3,94 +3,96 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fff0f5">
 <title>💕 ふたりのホンネ</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;padding:18px;min-height:100dvh;
+ margin:0;min-height:100dvh;padding:20px 14px;
  display:grid;place-items:center;
- background:linear-gradient(145deg,#fff0f5,#ffe5ec);
+ background:linear-gradient(150deg,#fff2f7,#ffe1eb);
  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
- color:#49343d
+ color:#523944
 }
 main{
- width:100%;max-width:430px;
- background:#fff;border-radius:26px;
- padding:28px 22px;text-align:center;
- box-shadow:0 12px 35px #cf739333
+ position:relative;width:100%;max-width:430px;
+ background:white;border-radius:26px;
+ padding:48px 22px 28px;text-align:center;
+ box-shadow:0 12px 36px #c85b8330
 }
-h1{color:#db6085;font-size:27px;margin:8px 0}
+h1{font-size:26px;color:#dc638b;margin:8px 0}
 h2{font-size:21px;overflow-wrap:anywhere}
 p{line-height:1.7}
-textarea{
- width:100%;height:110px;resize:vertical;
- padding:15px;margin:8px 0;
- border:1px solid #e9c6d1;border-radius:14px;
- font:inherit;font-size:16px
-}
 button{
- border:0;border-radius:14px;
- padding:15px;font-size:16px;
- font-weight:bold;cursor:pointer
+ border:0;border-radius:14px;padding:15px;
+ font-size:16px;font-weight:700;cursor:pointer
 }
 button:disabled{opacity:.5}
-.primary{
- width:100%;margin:9px 0;
- background:#e66b91;color:white
-}
-.secondary{background:#ffe0ea;color:#a83d60}
-.choices{display:flex;gap:12px}
+.primary{width:100%;background:#e66b91;color:white;margin:8px 0}
+.secondary{background:#ffe0eb;color:#a63b61}
+.choices{display:flex;gap:12px;margin:20px 0}
 .choices button{flex:1}
 .hidden{display:none!important}
-.muted{color:#947d86;font-size:13px}
-.status{font-size:14px;color:#99627a}
-.answers{display:flex;gap:10px;margin:20px 0}
-.answers>div{
- flex:1;padding:18px 5px;
- border-radius:15px;background:#fff0f5;
- font-size:20px;font-weight:bold
+.muted{font-size:13px;color:#977e89}
+.status{font-size:13px;color:#a26980}
+textarea{
+ width:100%;height:115px;padding:14px;
+ border:1px solid #e9c6d1;border-radius:14px;
+ resize:vertical;font:inherit;font-size:16px
 }
-.answers small{font-size:13px;color:#947d86}
-#error{color:#ba244d;overflow-wrap:anywhere}
-.invite-area{
- margin:16px 0 22px;padding:14px 12px;
- border:1px solid #f5d3df;border-radius:18px;
- background:#fff7fa
+input{
+ width:100%;padding:14px;border:1px solid #e9c6d1;
+ border-radius:12px;font-size:16px
 }
-.invite-note{
- font-size:12px;color:#947d86;margin:4px 0
+#share{
+ position:absolute;right:14px;top:14px;
+ background:#fff0f5;color:#b24c70;
+ padding:9px 12px;font-size:13px
 }
+.answerGrid{display:flex;gap:10px;margin:20px 0}
+.answerGrid div{
+ flex:1;padding:16px 5px;border-radius:15px;
+ background:#fff0f5;font-size:21px;font-weight:bold
+}
+.answerGrid small{display:block;font-size:12px;color:#947d86}
+#error{color:#bd2953;font-size:13px;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <main>
+<button id="share" class="hidden">♡ 招待</button>
 <h1>💕 ふたりのホンネ</h1>
-<p>ふたりの気持ちを、YES・NOで。</p>
-
-<p id="status" class="status">接続しています…</p>
+<p class="muted">ふたりの気持ちを、YES・NOで。</p>
+<p id="status" class="status">準備しています…</p>
 <p id="error" role="alert"></p>
 
-<section id="appScreen" class="hidden">
- <div class="invite-area">
-  <button id="share" class="primary">
-   💕 リンクを送る ♡
-  </button>
-  <p class="invite-note">
-   相手にアプリのリンクを送れるよ ♡
-  </p>
- </div>
+<section id="linkScreen" class="hidden">
+ <h2>ふたりのリンク ♡</h2>
+ <p>招待リンクを開いてね。</p>
+ <p class="muted">リンクがある場合はここに貼り付けてもOK。</p>
+ <input id="linkInput" placeholder="招待リンク">
+ <button id="openLink" class="primary">はじめる ♡</button>
+</section>
 
- <p id="members" class="muted"></p>
+<section id="roleScreen" class="hidden">
+ <h2>あなたはどっち？</h2>
+ <p>最初の1回だけ選んでね ♡</p>
+ <div class="choices">
+  <button id="role1" class="secondary">👤 1人目</button>
+  <button id="role2" class="secondary">👤 2人目</button>
+ </div>
+ <p class="muted">同じ番号を選ばないようにしてね。</p>
+</section>
+
+<section id="appScreen" class="hidden">
+ <p id="roleLabel" class="muted"></p>
 
  <section id="editor" class="hidden">
-  <textarea id="questionInput"
-   placeholder="ふたりに聞きたい質問を入力してね"
-   maxlength="200"></textarea>
-  <button id="ask" class="primary">
-   質問する ♡
-  </button>
+  <h2>何を聞いてみる？ ♡</h2>
+  <textarea id="questionInput" maxlength="200"
+   placeholder="今日は一緒に寝たい？"></textarea>
+  <button id="ask" class="primary">質問する ♡</button>
  </section>
 
  <section id="vote" class="hidden">
@@ -111,42 +113,27 @@ button:disabled{opacity:.5}
  <section id="result" class="hidden">
   <h2 id="resultQuestion"></h2>
   <p>ふたりの回答 ♡</p>
-  <div class="answers">
-   <div>
-    <small>あなた</small>
-    <p id="mine"></p>
-   </div>
-   <div>
-    <small>相手</small>
-    <p id="theirs"></p>
-   </div>
+  <div class="answerGrid">
+   <div><small>あなた</small><p id="mine"></p></div>
+   <div><small>相手</small><p id="theirs"></p></div>
   </div>
-  <button id="next" class="primary">
-   次の質問へ ♡
-  </button>
+  <button id="next" class="primary">次の質問へ ♡</button>
  </section>
 </section>
 
 <p class="muted">
  質問と回答は次の質問で消去されます。<br>
- 同じ2人で使い続けるための試作版です。
+ 招待リンクは信頼できる相手にだけ送ってね ♡
 </p>
 </main>
 
 <script type="module">
 import {initializeApp} from
- 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-
-import {
- getAuth,signInAnonymously,onAuthStateChanged
-} from
- 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-
-import {
- getFirestore,doc,getDoc,setDoc,onSnapshot,
- runTransaction,serverTimestamp
-} from
- 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import {getAuth,signInAnonymously,onAuthStateChanged} from
+'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import {getFirestore,doc,onSnapshot,runTransaction} from
+'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 const firebaseConfig={
  apiKey:"AIzaSyBpGIfu3jOksMS8_jPAUPXHuh4GzgwyUq8",
@@ -160,323 +147,190 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-
-// Firestoreルールで追加した固定データ
-const coupleRef=doc(db,'couples','main');
-
 const $=id=>document.getElementById(id);
-const show=(id,visible)=>
- $(id).classList.toggle('hidden',!!visible===false);
+const show=(id,yes)=>$(id).classList.toggle('hidden',!yes);
 
-let uid=null;
-let couple=null;
+let pairId=new URLSearchParams(location.search).get('pair');
+if(!pairId)pairId=localStorage.getItem('futariPair');
+let pairRef=null;
+let role=null;
+let data=null;
+let busy=false;
 let unsubscribe=null;
-let initializing=false;
-let authStarted=false;
-let actionBusy=false;
 
-function setStatus(message){
- $('status').textContent=message;
-}
-
-function clearError(){
- $('error').textContent='';
-}
-
-function showError(error){
- console.error(error);
+function errorMessage(e){
+ console.error(e);
  $('error').textContent=
-  error.code==='permission-denied'
-   ? 'アクセスが拒否されました。2人の登録状態とFirestoreルールを確認してね。'
-   : error.message||String(error);
+ e.code==='permission-denied'
+ ? 'アクセスできません。Firestoreのルールとリンクを確認してね。'
+ : e.message||String(e);
 }
-
-function setActionBusy(value){
- actionBusy=value;
- for(const id of ['ask','yes','no','next']){
-  $(id).disabled=value;
- }
+function clearError(){$('error').textContent='';}
+function setBusy(v){
+ busy=v;
+ for(const id of ['ask','yes','no','next'])
+  $(id).disabled=v;
 }
-
-function render(){
- if(!couple||!uid)return;
-
- const members=couple.members||[];
- const answers=couple.answers||{};
- const question=couple.question||'';
- const isMember=members.includes(uid);
-
- show('appScreen',true);
-
- $('members').textContent=
-  members.length===1
-   ? '相手の参加を待っています… ♡'
-   : 'ふたりが接続中 ♡';
-
- if(!isMember){
-  show('editor',false);
-  show('vote',false);
-  show('waiting',false);
-  show('result',false);
-  setStatus('このペアは登録済みです');
+function hideScreens(){
+ for(const id of ['linkScreen','roleScreen','appScreen'])
+  show(id,false);
+}
+function start(){
+ hideScreens();
+ if(!pairId||!/^[A-Za-z0-9]{20}$/.test(pairId)){
+  $('status').textContent='招待リンクを確認してね ♡';
+  show('linkScreen',true);
   return;
  }
-
- const myAnswer=answers[uid];
- const otherUid=members.find(id=>id!==uid);
- const otherAnswer=answers[otherUid];
- const bothAnswered=!!myAnswer&&!!otherAnswer;
-
- show('editor',members.length===2&&!question);
- show('vote',members.length===2&&!!question&&!myAnswer);
- show('waiting',!!question&&!!myAnswer&&!bothAnswered);
- show('result',!!question&&bothAnswered);
-
- if(question){
-  $('voteQuestion').textContent=question;
-  $('waitingQuestion').textContent=question;
-  $('resultQuestion').textContent=question;
- }
-
- if(bothAnswered){
-  $('mine').textContent=myAnswer;
-  $('theirs').textContent=otherAnswer;
- }
-}
-
-async function initializeCouple(){
- if(initializing||!uid)return;
- initializing=true;
- clearError();
- setStatus('ふたりのデータを確認しています…');
-
- try{
-  const snapshot=await getDoc(coupleRef);
-
-  if(!snapshot.exists()){
-   // 同時アクセス時は先に作成した側を優先
-   try{
-    await runTransaction(db,async tx=>{
-     const current=await tx.get(coupleRef);
-     if(!current.exists()){
-      tx.set(coupleRef,{
-       members:[uid],
-       question:'',
-       answers:{},
-       createdAt:serverTimestamp()
-      });
-     }
-    });
-   }catch(error){
-    // 競合で作成済みなら再取得で確認する
-    const retry=await getDoc(coupleRef);
-    if(!retry.exists())throw error;
-   }
-  }
-
-  // 最初の2人だけ登録
-  await runTransaction(db,async tx=>{
-   const current=await tx.get(coupleRef);
-
-   if(!current.exists()){
-    throw Error('ペアデータが見つかりません');
-   }
-
-   const members=current.data().members;
-
-   if(!Array.isArray(members)){
-    throw Error('ペアデータが不正です');
-   }
-
-   if(!members.includes(uid)){
-    if(members.length>=2){
-     throw Error(
-      'このアプリにはすでに2人が登録されています。'
-     );
-    }
-    tx.update(coupleRef,{
-     members:[...members,uid]
-    });
-   }
-  });
-
-  if(unsubscribe)unsubscribe();
-
-  unsubscribe=onSnapshot(coupleRef,snapshot=>{
-   if(!snapshot.exists()){
-    showError(Error('ペアデータがありません'));
-    return;
-   }
-
-   couple=snapshot.data();
-
-   if(!couple.members.includes(uid)){
-    show('appScreen',false);
-    showError(Error('このペアには参加できません'));
-    return;
-   }
-
-   setStatus('接続中 ♡');
-   render();
-  },showError);
-
- }catch(error){
-  showError(error);
-  setStatus('接続できませんでした');
- }finally{
-  initializing=false;
- }
-}
-
-async function askQuestion(){
- if(actionBusy||!uid)return;
-
- const question=$('questionInput').value.trim();
- if(!question){
-  showError(Error('質問を入力してね'));
-  return;
- }
-
- clearError();
- setActionBusy(true);
-
- try{
-  await runTransaction(db,async tx=>{
-   const snapshot=await tx.get(coupleRef);
-   const data=snapshot.data();
-
-   if(!data||
-      !data.members.includes(uid)||
-      data.members.length!==2||
-      data.question){
-    throw Error('今は質問を開始できません');
-   }
-
-   tx.update(coupleRef,{
-    question,
-    answers:{}
-   });
-  });
-  $('questionInput').value='';
- }catch(error){
-  showError(error);
- }finally{
-  setActionBusy(false);
- }
-}
-
-async function answer(value){
- if(actionBusy||!uid)return;
-
- clearError();
- setActionBusy(true);
-
- try{
-  await runTransaction(db,async tx=>{
-   const snapshot=await tx.get(coupleRef);
-   const data=snapshot.data();
-
-   if(!data||
-      !data.members.includes(uid)||
-      data.members.length!==2||
-      !data.question){
-    throw Error('回答できる質問がありません');
-   }
-
-   if(data.answers[uid])return;
-
-   tx.update(coupleRef,{
-    answers:{
-     ...data.answers,
-     [uid]:value
-    }
-   });
-  });
- }catch(error){
-  showError(error);
- }finally{
-  setActionBusy(false);
- }
-}
-
-async function nextQuestion(){
- if(actionBusy||!uid)return;
-
- clearError();
- setActionBusy(true);
-
- try{
-  await runTransaction(db,async tx=>{
-   const snapshot=await tx.get(coupleRef);
-   const data=snapshot.data();
-
-   if(!data||
-      !data.members.includes(uid)||
-      Object.keys(data.answers).length!==2){
-    throw Error('まだ2人の回答がそろっていません');
-   }
-
-   tx.update(coupleRef,{
-    question:'',
-    answers:{}
-   });
-  });
- }catch(error){
-  showError(error);
- }finally{
-  setActionBusy(false);
- }
-}
-
-async function shareInvite(){
+ localStorage.setItem('futariPair',pairId);
  const url=new URL(location.href);
- url.search='';
- url.hash='';
- const inviteUrl=url.toString();
-
+ url.searchParams.set('pair',pairId);
+ history.replaceState(null,'',url);
+ pairRef=doc(db,'pairs',pairId);
+ role=localStorage.getItem('futariRole:'+pairId);
+ show('share',true);
+ if(role!=='1'&&role!=='2'){
+  $('status').textContent='はじめまして ♡';
+  show('roleScreen',true);
+ }else{
+  connect();
+ }
+}
+function chooseRole(value){
+ role=value;
+ localStorage.setItem('futariRole:'+pairId,value);
+ connect();
+}
+function connect(){
+ hideScreens();
+ show('appScreen',true);
+ $('roleLabel').textContent=
+  (role==='1'?'1人目':'2人目')+'として参加中 ♡';
+ $('status').textContent='接続しています…';
+ if(unsubscribe)unsubscribe();
+ unsubscribe=onSnapshot(pairRef,snapshot=>{
+  if(!snapshot.exists()){
+   $('status').textContent='データが見つかりません';
+   $('error').textContent='招待リンクを確認してね。';
+   return;
+  }
+  clearError();
+  data=snapshot.data();
+  $('status').textContent='ふたりの空間 ♡';
+  render();
+ },e=>{
+  $('status').textContent='接続できませんでした';
+  errorMessage(e);
+ });
+}
+function render(){
+ if(!data)return;
+ const q=data.question||'';
+ const mine=role==='1'?data.answer1:data.answer2;
+ const other=role==='1'?data.answer2:data.answer1;
+ const both=!!mine&&!!other;
+ show('editor',!q);
+ show('vote',!!q&&!mine&&!both);
+ show('waiting',!!q&&!!mine&&!both);
+ show('result',!!q&&both);
+ if(q){
+  $('voteQuestion').textContent=q;
+  $('waitingQuestion').textContent=q;
+  $('resultQuestion').textContent=q;
+ }
+ if(both){
+  $('mine').textContent=mine;
+  $('theirs').textContent=other;
+ }
+}
+async function change(action,value){
+ if(busy||!pairRef)return;
+ clearError();
+ setBusy(true);
+ try{
+  await runTransaction(db,async tx=>{
+   const snap=await tx.get(pairRef);
+   if(!snap.exists())throw Error('データがありません');
+   const d=snap.data();
+   const q=d.question||'';
+   const a1=d.answer1||'';
+   const a2=d.answer2||'';
+   if(action==='ask'){
+    if(q)throw Error('前の質問がまだ残っています');
+    tx.update(pairRef,{
+     question:value,answer1:'',answer2:'',
+     status:'asking'
+    });
+   }else if(action==='answer'){
+    if(!q)throw Error('質問がありません');
+    const field=role==='1'?'answer1':'answer2';
+    if(d[field])throw Error('回答済みです');
+    const next1=role==='1'?value:a1;
+    const next2=role==='2'?value:a2;
+    tx.update(pairRef,{
+     [field]:value,
+     status:next1&&next2?'revealed':'asking'
+    });
+   }else if(action==='next'){
+    if(!q||!a1||!a2)
+     throw Error('まだ回答がそろっていません');
+    tx.update(pairRef,{
+     question:'',answer1:'',answer2:'',
+     status:'ready'
+    });
+   }
+  });
+  if(action==='ask')$('questionInput').value='';
+ }catch(e){errorMessage(e);}
+ finally{setBusy(false);}
+}
+$('ask').onclick=()=>{
+ const q=$('questionInput').value.trim();
+ if(!q){$('error').textContent='質問を入力してね ♡';return;}
+ change('ask',q);
+};
+$('yes').onclick=()=>change('answer','YES');
+$('no').onclick=()=>change('answer','NO');
+$('next').onclick=()=>change('next');
+$('role1').onclick=()=>chooseRole('1');
+$('role2').onclick=()=>chooseRole('2');
+$('openLink').onclick=()=>{
+ try{
+  const input=$('linkInput').value.trim();
+  const url=new URL(input,location.href);
+  const id=url.searchParams.get('pair');
+  if(!id||!/^[A-Za-z0-9]{20}$/.test(id))
+   throw Error('正しい招待リンクを入力してね');
+  pairId=id;
+  start();
+ }catch(e){errorMessage(e);}
+};
+$('share').onclick=async()=>{
+ const url=new URL(location.href);
+ url.searchParams.set('pair',pairId);
+ const link=url.toString();
  try{
   if(navigator.share){
    await navigator.share({
     title:'💕 ふたりのホンネ',
-    text:'ふたりの気持ちを、YES・NOで。一緒に答えよう ♡',
-    url:inviteUrl
+    text:'一緒にYES・NOで答えよう ♡',
+    url:link
    });
   }else if(navigator.clipboard){
-   await navigator.clipboard.writeText(inviteUrl);
+   await navigator.clipboard.writeText(link);
    alert('リンクをコピーしたよ ♡');
-  }else{
-   prompt('このリンクをコピーしてね ♡',inviteUrl);
-  }
- }catch(error){
-  if(error.name!=='AbortError')showError(error);
+  }else prompt('このリンクをコピーしてね',link);
+ }catch(e){
+  if(e.name!=='AbortError')errorMessage(e);
  }
-}
-
-$('ask').onclick=askQuestion;
-$('yes').onclick=()=>answer('YES');
-$('no').onclick=()=>answer('NO');
-$('next').onclick=nextQuestion;
-$('share').onclick=shareInvite;
-
+};
+start();
 onAuthStateChanged(auth,async user=>{
  if(!user){
-  uid=null;
-  if(!authStarted){
-   authStarted=true;
-   try{
-    await signInAnonymously(auth);
-   }catch(error){
-    showError(error);
-    setStatus('認証に失敗しました');
-   }
-  }
-  return;
+  try{await signInAnonymously(auth);}
+  catch(e){errorMessage(e);}
  }
-
- uid=user.uid;
- authStarted=true;
- await initializeCouple();
-},showError);
+});
 </script>
 </body>
 </html>
